@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Music Player</title>
+<style>
+    /* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.player-container {
+    background-color: #ff0037;
+    backdrop-filter: blur(2px);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin: 10px 0;
+}
+
+.control-button {
+    background-color: #00ff08;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.control-button:hover {
+    background-color: #45a049;
+}
+
+.progress-container, .volume-container {
+    margin: 20px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    cursor: pointer;
+}
+
+.time-info {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.volume-control {
+    width: 100%;
+}
+
+.track-info {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+</style>
+</head>
+<body>
+    <div class="player-container">
+        <h1>Music Player</h1>
+        <audio id="audio" src="audio.m4a"></audio>
+        <div class="controls">
+            <button id="playButton" class="control-button">Play</button>
+            <button id="pauseButton" class="control-button">Pause</button>
+            <button id="stopButton" class="control-button">Stop</button>
+        </div>
+        <div class="progress-container">
+            <input type="range" id="progressBar" class="progress-bar" value="0" max="100">
+            <div class="time-info">
+                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+            </div>
+        </div>
+        <div class="volume-container">
+            <label for="volumeControl">Volume:</label>
+            <input type="range" id="volumeControl" class="volume-control" value="100" max="100">
+        </div>
+        <div class="track-info">
+            <p id="trackTitle">Track: Your Song</p>
+        </div>
+    </div>
+    <script>
+// scripts.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('audio');
+    const playButton = document.getElementById('playButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const stopButton = document.getElementById('stopButton');
+    const progressBar = document.getElementById('progressBar');
+    const volumeControl = document.getElementById('volumeControl');
+    const currentTimeDisplay = document.getElementById('currentTime');
+    const durationDisplay = document.getElementById('duration');
+    const trackTitle = document.getElementById('trackTitle');
+
+    // Update the track duration once metadata is loaded
+    audio.addEventListener('loadedmetadata', () => {
+        durationDisplay.textContent = formatTime(audio.duration);
+        progressBar.max = audio.duration;
+    });
+
+    // Update the current time and progress bar
+    audio.addEventListener('timeupdate', () => {
+        currentTimeDisplay.textContent = formatTime(audio.currentTime);
+        progressBar.value = audio.currentTime;
+    });
+
+    // Play button functionality
+    playButton.addEventListener('click', () => {
+        audio.play();
+        trackTitle.textContent = `Track: ${audio.src.split('/').pop()}`;
+    });
+
+    // Pause button functionality
+    pauseButton.addEventListener('click', () => {
+        audio.pause();
+    });
+
+    // Stop button functionality
+    stopButton.addEventListener('click', () => {
+        audio.pause();
+        audio.currentTime = 0; // Reset to start
+        currentTimeDisplay.textContent = formatTime(0);
+        progressBar.value = 0;
+    });
+
+    // Progress bar functionality
+    progressBar.addEventListener('input', () => {
+        audio.currentTime = progressBar.value;
+    });
+
+    // Volume control functionality
+    volumeControl.addEventListener('input', () => {
+        audio.volume = volumeControl.value / 100;
+    });
+
+    // Helper function to format time
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+});
+
+    </script>
+</body>
+</html>
